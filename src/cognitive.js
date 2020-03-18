@@ -1,6 +1,5 @@
 require('dotenv').config()
 
-const { stripIndent } = require('common-tags')
 const {
   TextAnalyticsClient,
   TextAnalyticsApiKeyCredential
@@ -33,7 +32,13 @@ const sentiment = async ({ key = '', endpoint = '', text = [] }) => {
         confidenceScores = {},
         sentences = []
       } = document
-      const { positive, negative, neutral } = confidenceScores
+
+      const {
+        positive = 0,
+        negative = 0,
+        neutral = 0
+      } = confidenceScores
+
       const result = {
         id,
         sentiment,
