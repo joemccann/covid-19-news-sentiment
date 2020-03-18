@@ -9,9 +9,13 @@ const isStatsPost = (html = '') => {
 //
 // Return a list of articles as an array
 //
-const extractArticles = ({ html = '' }) => {
+const extractArticles = ({ html = '', messageId = 0 }) => {
   if (!html) {
-    return { err: new Error('Missing HTML parameter.') }
+    return { err: new Error('Missing `html` parameter.') }
+  }
+
+  if (!messageId) {
+    return { err: new Error('Missing `postId` parameter.') }
   }
 
   if (!isStatsPost(html)) {
@@ -28,6 +32,7 @@ const extractArticles = ({ html = '' }) => {
       const title = ($(this).text()).trim()
       articles.push({
         href,
+        messageId,
         timestamp,
         title
       })
@@ -37,7 +42,7 @@ const extractArticles = ({ html = '' }) => {
   }
   $('.tgme_widget_message_text.js-message_text > a').each(parse)
 
-  return { data: { articles, timestamp } }
+  return { data: { articles } }
 }
 
 //
