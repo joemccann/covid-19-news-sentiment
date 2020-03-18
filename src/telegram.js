@@ -26,10 +26,6 @@ const extractArticles = ({ html = '' }) => {
     try {
       const href = $(this).attr('href')
       const title = ($(this).text()).trim()
-
-      console.dir(href)
-      console.log(title)
-
       articles.push({
         href,
         timestamp,
