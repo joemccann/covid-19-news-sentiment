@@ -4,7 +4,7 @@
 
 # CVD-19 News Sentiment
 
-A free, open source service that aims to determine the senitment of news and headlines around Coronavirus-19.
+A free, open source service that aims to determine the sentiment of news and headlines around Coronavirus-19.
 
 ## Requirements
 
