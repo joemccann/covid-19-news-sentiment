@@ -1,0 +1,37 @@
+{
+  "name": "covid-19-news-sentiment",
+  "version": "1.0.0",
+  "description": "Extract sentiment from news articles on Covid-19",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "pretest": "standard .",
+    "test": "node test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joemccann/covid-19-news-sentiment.git"
+  },
+  "keywords": [
+    "covid-19",
+    "coronavirus",
+    "sentiment",
+    "news"
+  ],
+  "author": "Joe McCann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joemccann/covid-19-news-sentiment/issues"
+  },
+  "homepage": "https://github.com/joemccann/covid-19-news-sentiment#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "standard": "^14.3.3",
+    "tape": "^4.13.2"
+  }
+}
