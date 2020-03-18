@@ -4,17 +4,17 @@ const {
   sentiment
 } = require('../src/cognitive')
 
-test('sanity', t => {
-  t.ok(true)
-  t.end()
-})
-
 const {
   extractArticles,
   getTelegramPostHTML
 } = require('../src/telegram')
 
 let html = ''
+
+test('sanity', t => {
+  t.ok(true)
+  t.end()
+})
 
 test('pass -- fetch telegram post HTML', async t => {
   const telegramUrl = 'https://t.me/covid_19_updates/202?embed=1'
