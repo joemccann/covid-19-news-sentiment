@@ -2,11 +2,12 @@
   "name": "covid-19-news-sentiment",
   "version": "1.0.0",
   "description": "Extract sentiment from news articles on Covid-19",
-  "main": "index.js",
+  "main": "src/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "start": "node .",
     "pretest": "clear && standard .",
     "test": "tape test/**/test-*.js"
   },
@@ -30,10 +31,10 @@
     "@azure/ai-text-analytics": "^1.0.0-preview.3",
     "@azure/cognitiveservices-textanalytics": "^4.0.0",
     "@azure/storage-blob": "^12.1.1",
-    "azure-cognitiveservices-textanalytics": "^3.0.0",
     "cheerio": "^1.0.0-rc.3",
     "common-tags": "^1.8.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "p-throttle": "^3.1.0"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
