@@ -6,6 +6,14 @@ const isStatsPost = (html = '') => {
   return { data: html.includes('🦠 Total Number of Cases:') }
 }
 
+const isNotFound = (html = '') => {
+  if (!html) return { err: new Error('No html to evaluate if not found.') }
+  return {
+    data: html
+      .includes('<b>@covid_19_updates</b> not found')
+  }
+}
+
 //
 // Return a list of articles as an array
 //
@@ -18,30 +26,50 @@ const extractArticles = ({ html = '', messageId = 0 }) => {
     return { err: new Error('Missing `postId` parameter.') }
   }
 
-  if (!isStatsPost(html)) {
-    return { data: [] }
+  //
+  // Bail on a "not found" page (not a 404)
+  //
+  {
+    const { err, data: noPostFound } = isNotFound(html)
+    if (err) return { err }
+    if (noPostFound) return { data: [] }
   }
+
+  //
+  // Bail on a stats page
+  //
+  {
+    const { err, data: isStats } = isStatsPost(html)
+    if (err) return { err }
+    if (isStats) return { data: [] }
+  }
+
   const $ = cheerio.load(html)
 
-  const timestamp = $('time').attr('datetime') || null
-
   const articles = []
-  const parse = function (i, elem) {
-    try {
-      const href = $(this).attr('href')
-      const title = ($(this).text()).trim()
-      articles.push({
-        href,
-        messageId,
-        timestamp,
-        title
-      })
-    } catch (error) {
-      console.error(error)
-    }
-  }
-  $('.tgme_widget_message_text.js-message_text > a').each(parse)
+  const timestamp = $('.datetime').attr('datetime') || null
 
+  if (!timestamp) {
+    const err = new Error('No timestamp for ' +
+    `https://t.me/covid_19_updates/${messageId}?embed=1`)
+    console.error(err.message)
+  } else {
+    const parse = function (i, elem) {
+      try {
+        const href = $(this).attr('href')
+        const title = ($(this).text()).trim()
+        articles.push({
+          href,
+          messageId,
+          timestamp,
+          title
+        })
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    $('.tgme_widget_message_text.js-message_text > a').each(parse)
+  }
   return { data: { articles } }
 }
 
