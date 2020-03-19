@@ -1,11 +1,14 @@
+require('dotenv').config()
 const {
   extractArticles,
   getTelegramPostHTML
 } = require('./telegram')
 
-const { read, write } = require('./fs')
+const { write } = require('./fs')
 
-const main = async ({ start = 202, end = 212 }) => {
+const pThrottle = require('p-throttle')
+
+const generateArticles = async ({ start = 202, end = 9999 }) => {
   //
   // Step 1: Cycle through all the posts
   //
@@ -13,14 +16,17 @@ const main = async ({ start = 202, end = 212 }) => {
   const messages = []
 
   //
-  // Populate array from start to finish
+  // Populate array from start to finish with messageIds
   //
   for (let i = start; i <= end; i++) {
     messages.push(i)
   }
 
-  const promises = messages.map(async (messageId) => {
-    console.log(`Fetching message ID ${messageId}...`)
+  const limit = 5
+  const interval = 100
+
+  const throttled = pThrottle(async (messageId) => {
+    // console.log(`Fetching message ID ${messageId}...`)
 
     const telegramUrl = `https://t.me/covid_19_updates/${messageId}?embed=1`
 
@@ -35,15 +41,17 @@ const main = async ({ start = 202, end = 212 }) => {
       //
       // Only add articles if they exist
       //
-      if (data.articles.length) {
+      if (data.articles && data.articles.length) {
         results.push(...data.articles)
       }
+      console.log(data)
       return { data: 'ok' }
     }
-  })
+  }, limit, interval)
 
   try {
-    await Promise.all(promises)
+    await Promise.all(messages.map(throttled))
+    console.dir(results)
 
     const unique = []
     const map = new Map()
@@ -68,4 +76,24 @@ const main = async ({ start = 202, end = 212 }) => {
   }
 }
 
-module.exports = main
+const writeArticlesFile = async ({
+  content = '',
+  filename = '',
+  container = ''
+}) => {
+  container = process.env.AZURE_STORAGE_CONTAINER || container
+
+  if (!content) return { err: new Error('Missing `content` parameter.') }
+  if (!filename) return { err: new Error('Missing `filename` parameter.') }
+  if (!container) return { err: new Error('Missing `container` parameter.') }
+
+  const { err, data } = await write({
+    content,
+    container,
+    filename
+  })
+  if (err) return { err }
+  return { data }
+}
+
+module.exports = { generateArticles, writeArticlesFile }
