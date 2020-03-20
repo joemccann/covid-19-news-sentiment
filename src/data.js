@@ -22,11 +22,11 @@ const generateArticles = async ({ start = 202, end = 9999 }) => {
     messages.push(i)
   }
 
-  const limit = 5
-  const interval = 100
+  const limit = 1
+  const interval = 200
 
   const throttled = pThrottle(async (messageId) => {
-    // console.log(`Fetching message ID ${messageId}...`)
+    console.log(`>>> Fetching message ID ${messageId}...`)
 
     const telegramUrl = `https://t.me/covid_19_updates/${messageId}?embed=1`
 
@@ -42,9 +42,9 @@ const generateArticles = async ({ start = 202, end = 9999 }) => {
       // Only add articles if they exist
       //
       if (data.articles && data.articles.length) {
+        console.log(`pushing ${messageId}`)
         results.push(...data.articles)
       }
-      console.log(data)
       return { data: 'ok' }
     }
   }, limit, interval)

@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="CVD-19 Virus" src="assets/botpic.jpg" />
+  <img alt="CVD-19 Virus" src="assets/img/botpic.jpg" />
 </p>
 
 # CVD-19 News Sentiment

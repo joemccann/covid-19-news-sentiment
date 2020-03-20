@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+const fs = require('fs')
 const { generateArticles, writeArticlesFile } = require('./src/data')
 
 function compare (a, b) {
@@ -29,7 +29,6 @@ const build = async () => {
     }
     data.sort(compare)
     console.log(data.length)
-    console.dir(data)
     content = JSON.stringify(data)
   }
 
@@ -42,11 +41,57 @@ const build = async () => {
       console.error(err.message)
       return { err }
     }
-    console.dir(data, { depth: null })
+    console.dir(data)
     return { data }
   }
 }
 
-build()
+const { sentiment } = require('./src/cognitive')
+
+const senitmentFromFile = async ({ filename = '' }) => {
+  if (!filename) return { err: new Error('Mising `filename` parameter') }
+
+  filename = ['./assets/json', filename].join('')
+
+  let content = null
+  try {
+    content = await fs.promises.open(filename, 'r')
+  } catch (err) {
+    console.error(err.message)
+    return { err }
+  }
+
+  try {
+    const text = []
+
+    content.forEach(el => {
+      text.push(el.title)
+    })
+
+    const { err, data: sentimentData } = await sentiment({ text })
+
+    console.error(err)
+
+    sentimentData.forEach(result => {
+      console.log(result.message)
+    })
+    console.dir(sentimentData, { depth: null })
+    //
+    // Merge the results with the file so the sentiment scores
+    // are associated with the articles
+    //
+    const merged = merge({ sentimentData, articlesData })
+    const merged = [...sentimentData, ...articlesData];
+
+    content = await fs.promises.write('merged-' + filename, merged)
+  } catch (err) {
+    console.error(err)
+    return { err }
+  }
+}
+
+// build()
+
+senitmentFromFile({ filename: '202-2637.json' })
 
 module.exports = build

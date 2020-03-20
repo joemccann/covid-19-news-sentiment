@@ -8,9 +8,11 @@ const isStatsPost = (html = '') => {
 
 const isNotFound = (html = '') => {
   if (!html) return { err: new Error('No html to evaluate if not found.') }
+  const data = html.includes('<b>@covid_19_updates</b> not found') ||
+      html
+        .includes('class="tgme_widget_message_error" dir="auto">Post not found')
   return {
-    data: html
-      .includes('<b>@covid_19_updates</b> not found')
+    data
   }
 }
 
