@@ -18,21 +18,23 @@ function compare (a, b) {
 const build = async () => {
   let content = null
   const start = 202
-  const end = 2800
+  const end = 3000
   const filename = [String(start), '-', String(end), '.json'].join('')
 
   {
     const { err, data } = await generateArticles({ start, end })
     if (err) {
-      console.error(err.message)
+      console.error(err)
       return { err }
     }
+    console.log('>>> comparing...')
     data.sort(compare)
     console.log(data.length)
     content = JSON.stringify(data)
   }
 
   {
+    console.log('>>> writing file...')
     const { err, data } = await writeArticlesFile({
       content,
       filename
@@ -51,15 +53,17 @@ const { sentiment } = require('./src/cognitive')
 const senitmentFromFile = async ({ filename = '' }) => {
   if (!filename) return { err: new Error('Mising `filename` parameter') }
 
-  filename = ['./assets/json', filename].join('')
+  filename = ['./assets/json/', filename].join('')
 
   let content = null
   try {
-    content = await fs.promises.open(filename, 'r')
+    content = JSON.parse(await fs.promises.readFile(filename))
   } catch (err) {
     console.error(err.message)
     return { err }
   }
+
+  console.dir(content)
 
   try {
     const text = []
@@ -68,30 +72,40 @@ const senitmentFromFile = async ({ filename = '' }) => {
       text.push(el.title)
     })
 
+    console.log(text)
+
     const { err, data: sentimentData } = await sentiment({ text })
 
-    console.error(err)
+    if (err) {
+      console.error(err)
+      return { err }
+    }
 
     sentimentData.forEach(result => {
       console.log(result.message)
     })
+
     console.dir(sentimentData, { depth: null })
     //
     // Merge the results with the file so the sentiment scores
     // are associated with the articles
     //
-    const merged = merge({ sentimentData, articlesData })
-    const merged = [...sentimentData, ...articlesData];
+    const merged = JSON.stringify([...sentimentData, ...content])
 
-    content = await fs.promises.write('merged-' + filename, merged)
+    //
+    // Write merged file...
+    //
+    const written = await fs.promises.write('merged-' + filename, merged)
+    console.log(`written: ${written}`)
+    return { data: written }
   } catch (err) {
     console.error(err)
     return { err }
   }
 }
 
-// build()
+build()
 
-senitmentFromFile({ filename: '202-2637.json' })
+// senitmentFromFile({ filename: '202-2637.json' })
 
 module.exports = build

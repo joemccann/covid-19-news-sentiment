@@ -9,6 +9,7 @@ const {
   getTelegramPostHTML
 } = require('../src/telegram')
 
+const messageId = 202
 let html = ''
 
 test('sanity', t => {
@@ -17,7 +18,7 @@ test('sanity', t => {
 })
 
 test('pass -- fetch telegram post HTML', async t => {
-  const telegramUrl = 'https://t.me/covid_19_updates/202?embed=1'
+  const telegramUrl = `https://t.me/covid_19_updates/${messageId}?embed=1`
   const { err, data } = await getTelegramPostHTML({ telegramUrl })
   t.ok(!err)
   t.ok(data)
@@ -28,7 +29,7 @@ test('pass -- fetch telegram post HTML', async t => {
 let articles = null
 
 test('pass -- extract articles', async t => {
-  const { err, data } = await extractArticles({ html })
+  const { err, data } = await extractArticles({ html, messageId })
   t.ok(!err)
   t.ok(data)
   articles = data.articles

@@ -6,6 +6,8 @@ const {
 
 const { write } = require('./fs')
 
+const { sentiment } = require('./cognitive')
+
 const pThrottle = require('p-throttle')
 
 const generateArticles = async ({ start = 202, end = 9999 }) => {
@@ -22,18 +24,18 @@ const generateArticles = async ({ start = 202, end = 9999 }) => {
     messages.push(i)
   }
 
-  const limit = 1
-  const interval = 200
+  const limit = 3
+  const interval = 10000
 
   const throttled = pThrottle(async (messageId) => {
-    console.log(`>>> Fetching message ID ${messageId}...`)
+    // console.log(`>>> Fetching message ID ${messageId}...`)
 
     const telegramUrl = `https://t.me/covid_19_updates/${messageId}?embed=1`
 
     const { err, data: html } = await getTelegramPostHTML({ telegramUrl })
 
     if (err) {
-      console.error(err.message)
+      console.error(err)
       return { err }
     } else {
       const { err, data } = await extractArticles({ html, messageId })
@@ -41,9 +43,27 @@ const generateArticles = async ({ start = 202, end = 9999 }) => {
       //
       // Only add articles if they exist
       //
-      if (data.articles && data.articles.length) {
-        console.log(`pushing ${messageId}`)
-        results.push(...data.articles)
+      const { articles = [] } = data
+      if (articles.length) {
+        console.log(`>>> Analyzing Sentiment for ${messageId}`)
+        const text = []
+
+        articles.forEach(el => {
+          text.push(el.title)
+        })
+
+        const {
+          err: sentimentErr,
+          data: sentimentData
+        } = await sentiment({ text })
+
+        if (sentimentErr) console.error(sentimentErr)
+        else {
+          const merge = articles.map((item, i) =>
+            Object.assign({}, item, sentimentData[i]))
+
+          results.push(...merge)
+        }
       }
       return { data: 'ok' }
     }
@@ -51,10 +71,10 @@ const generateArticles = async ({ start = 202, end = 9999 }) => {
 
   try {
     await Promise.all(messages.map(throttled))
-    console.dir(results)
 
     const unique = []
     const map = new Map()
+    console.log('>>> Creating unique Map...')
     for (const item of results) {
       //
       // Check to see if the Map has the title (could check URL)
