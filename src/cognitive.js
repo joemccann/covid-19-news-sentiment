@@ -25,7 +25,6 @@ const sentiment = async ({ key = '', endpoint = '', text = [] }) => {
     const data = []
 
     sentimentResult.forEach(document => {
-      const message = []
       const {
         id = null,
         sentiment = null,
@@ -47,20 +46,6 @@ const sentiment = async ({ key = '', endpoint = '', text = [] }) => {
         neutral,
         sentences
       }
-      message.push(`\n\nID: ${id}`)
-      message.push(`Document Sentiment: ${sentiment}`)
-      message.push(`Positive: ${positive.toFixed(2)}`)
-      message.push(`Negative: ${negative.toFixed(2)}`)
-      message.push(`Neutral: ${neutral.toFixed(2)}`)
-      message.push(`\nSentences Sentiment (${sentences.length} Total):`)
-      sentences.forEach(s => {
-        message.push(`Sentence sentiment: ${s.sentiment}`)
-        message.push('\nSentences Scores:')
-        message.push(`Positive: ${s.confidenceScores.positive.toFixed(2)}`)
-        message.push(`Negative: ${s.confidenceScores.negative.toFixed(2)}`)
-        message.push(`Neutral: ${s.confidenceScores.neutral.toFixed(2)}`)
-      })
-      result.message = message.join('\n')
       data.push(result)
     })
     return { data }
