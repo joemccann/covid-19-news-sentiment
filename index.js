@@ -23,7 +23,12 @@ const build = async () => {
   let content = null
   const start = 3478
   const end = 3500
-  const filename = [String(start), '-', String(end), '.json'].join('')
+  const filename = [
+    'messages-',
+    String(start),
+    '-',
+    String(end),
+    '.json'].join('')
 
   {
     const { err, data } = await generateArticles({ start, end })
