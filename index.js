@@ -1,8 +1,12 @@
 require('dotenv').config()
-const fs = require('fs')
-const { generateArticles, writeArticlesFile } = require('./src/data')
 
-function compare (a, b) {
+const fs = require('fs')
+const {
+  generateArticles,
+  writeArticlesFile
+} = require('./src/data')
+
+const compare = (a, b) => {
   const id1 = a.messageId
   const id2 = b.messageId
 
@@ -17,8 +21,8 @@ function compare (a, b) {
 
 const build = async () => {
   let content = null
-  const start = 202
-  const end = 3000
+  const start = 3478
+  const end = 3500
   const filename = [String(start), '-', String(end), '.json'].join('')
 
   {
@@ -27,14 +31,14 @@ const build = async () => {
       console.error(err)
       return { err }
     }
-    console.log('>>> comparing...')
+    console.log('>>> Sorting...')
     data.sort(compare)
     console.log(data.length)
     content = JSON.stringify(data)
   }
 
   {
-    console.log('>>> writing file...')
+    console.log('>>> Writing file...')
     const { err, data } = await writeArticlesFile({
       content,
       filename
@@ -106,6 +110,6 @@ const senitmentFromFile = async ({ filename = '' }) => {
 
 build()
 
-// senitmentFromFile({ filename: '202-2637.json' })
+// senitmentFromFile({ filename: '2637-3216.json' })
 
 module.exports = build
