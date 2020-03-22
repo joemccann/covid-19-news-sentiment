@@ -1,4 +1,7 @@
 require('dotenv').config()
+
+const pThrottle = require('p-throttle')
+
 const {
   extractArticles,
   getTelegramPostHTML
@@ -7,8 +10,6 @@ const {
 const { write } = require('./fs')
 
 const { sentiment } = require('./cognitive')
-
-const pThrottle = require('p-throttle')
 
 const generateArticles = async ({ start = 202, end = 9999 }) => {
   //
@@ -25,7 +26,7 @@ const generateArticles = async ({ start = 202, end = 9999 }) => {
   }
 
   const limit = 3
-  const interval = 10000
+  const interval = 3000
 
   const throttled = pThrottle(async (messageId) => {
     // console.log(`>>> Fetching message ID ${messageId}...`)
