@@ -1,6 +1,6 @@
 {
   "name": "covid-19-news-sentiment",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Extract sentiment from news articles on Covid-19",
   "main": "index.js",
   "directories": {
