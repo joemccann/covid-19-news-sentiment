@@ -44,12 +44,8 @@ test('pass -- sentiment text', async t => {
     })
     const { err, data } = await sentiment({ text })
 
-    console.error(err)
     t.ok(!err)
     t.ok(data)
-    data.forEach(result => {
-      console.log(result.message)
-    })
     t.end()
   } catch (error) {
     console.error(error)

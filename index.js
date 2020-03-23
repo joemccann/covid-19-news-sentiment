@@ -1,6 +1,5 @@
 require('dotenv').config()
 
-const fs = require('fs')
 const {
   generateArticles,
   writeArticlesFile
@@ -19,10 +18,20 @@ const compare = (a, b) => {
   return comparison
 }
 
-const build = async () => {
+//
+// Start = beginning messageId
+// Increment = Start + some offset of a future message
+//
+const build = async ({ start = 0, increment = 0 }) => {
+  if (!start) return { err: new Error('Missing `start` parameter') }
+  if (!increment) return { err: new Error('Missing `increment` parameter') }
+
+  //
+  // If the starting messageId is 329, then the end should the start
+  // plus the increment value, 1329...
+  //
+  const end = start + increment
   let content = null
-  const start = 3482
-  const end = 4000
   let lastId = null
 
   {
@@ -31,9 +40,7 @@ const build = async () => {
       console.error(err)
       return { err }
     }
-    console.log('>>> Sorting...')
     data.sort(compare)
-    console.log(data.length)
     content = JSON.stringify(data)
     lastId = (data.pop()).messageId
   }
@@ -47,79 +54,17 @@ const build = async () => {
       String(lastId),
       '.json'].join('')
 
-    console.log(`>>> Filename: ${filename}`)
-
     const { err, data } = await writeArticlesFile({
       content,
       filename
     })
+
     if (err) {
       console.error(err.message)
       return { err }
     }
-    console.dir(data)
     return { data }
   }
 }
-
-const { sentiment } = require('./src/cognitive')
-
-const senitmentFromFile = async ({ filename = '' }) => {
-  if (!filename) return { err: new Error('Mising `filename` parameter') }
-
-  filename = ['./assets/json/', filename].join('')
-
-  let content = null
-  try {
-    content = JSON.parse(await fs.promises.readFile(filename))
-  } catch (err) {
-    console.error(err.message)
-    return { err }
-  }
-
-  console.dir(content)
-
-  try {
-    const text = []
-
-    content.forEach(el => {
-      text.push(el.title)
-    })
-
-    console.log(text)
-
-    const { err, data: sentimentData } = await sentiment({ text })
-
-    if (err) {
-      console.error(err)
-      return { err }
-    }
-
-    sentimentData.forEach(result => {
-      console.log(result.message)
-    })
-
-    console.dir(sentimentData, { depth: null })
-    //
-    // Merge the results with the file so the sentiment scores
-    // are associated with the articles
-    //
-    const merged = JSON.stringify([...sentimentData, ...content])
-
-    //
-    // Write merged file...
-    //
-    const written = await fs.promises.write('merged-' + filename, merged)
-    console.log(`written: ${written}`)
-    return { data: written }
-  } catch (err) {
-    console.error(err)
-    return { err }
-  }
-}
-
-build()
-
-// senitmentFromFile({ filename: '2637-3216.json' })
 
 module.exports = build

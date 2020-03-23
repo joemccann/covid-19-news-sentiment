@@ -2,14 +2,14 @@
   "name": "covid-19-news-sentiment",
   "version": "1.1.1",
   "description": "Extract sentiment from news articles on Covid-19",
-  "main": "src/index.js",
+  "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "start": "node .",
     "pretest": "clear && standard .",
-    "test": "tape test/**/test-*.js"
+    "test": "tape test/**/suite-test-*.js"
   },
   "repository": {
     "type": "git",

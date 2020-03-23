@@ -1,14 +1,15 @@
+require('dotenv').config()
 const test = require('tape')
 const pkg = require('../package.json')
 
 const { read, write } = require('../src/fs')
 
+const container = 'covid-19-sentiment-container'
+
 test('sanity', t => {
   t.ok(true)
   t.end()
 })
-
-const container = 'covid-19-sentiment-container'
 
 test('pass - write blob storage file pass', async t => {
   const content = JSON.stringify(pkg)

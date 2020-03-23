@@ -11,6 +11,9 @@ const { write } = require('./fs')
 
 const { sentiment } = require('./cognitive')
 
+const limit = process.env.THROTTLE_LIMIT || 3
+const interval = process.env.THROTTLE_INTERVAL || 3000
+
 const generateArticles = async ({ start = 1, end = 99999 }) => {
   //
   // Step 1: Cycle through all the posts
@@ -25,12 +28,7 @@ const generateArticles = async ({ start = 1, end = 99999 }) => {
     messages.push(i)
   }
 
-  const limit = 3
-  const interval = 3000
-
   const throttled = pThrottle(async (messageId) => {
-    // console.log(`>>> Fetching message ID ${messageId}...`)
-
     const telegramUrl = `https://t.me/covid_19_updates/${messageId}?embed=1`
 
     const { err, data: html } = await getTelegramPostHTML({ telegramUrl })
@@ -75,7 +73,6 @@ const generateArticles = async ({ start = 1, end = 99999 }) => {
 
     const unique = []
     const map = new Map()
-    console.log('>>> Creating unique Map...')
     for (const item of results) {
       //
       // Check to see if the Map has the title (could check URL)
