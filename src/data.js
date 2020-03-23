@@ -11,8 +11,8 @@ const { write } = require('./fs')
 
 const { sentiment } = require('./cognitive')
 
-const limit = process.env.THROTTLE_LIMIT || 3
-const interval = process.env.THROTTLE_INTERVAL || 3000
+const limit = parseInt(process.env.THROTTLE_LIMIT || 0) || 3
+const interval = parseInt(process.env.THROTTLE_INTERVAL || 0) || 3000
 
 const generateArticles = async ({ start = 1, end = 99999 }) => {
   //

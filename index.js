@@ -30,7 +30,7 @@ const build = async ({ start = 0, increment = 0 }) => {
   // If the starting messageId is 329, then the end should the start
   // plus the increment value, 1329...
   //
-  const end = start + increment
+  const end = parseInt(start) + parseInt(increment)
   let content = null
   let lastId = null
 
