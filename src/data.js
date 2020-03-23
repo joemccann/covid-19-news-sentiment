@@ -11,7 +11,7 @@ const { write } = require('./fs')
 
 const { sentiment } = require('./cognitive')
 
-const generateArticles = async ({ start = 202, end = 9999 }) => {
+const generateArticles = async ({ start = 1, end = 99999 }) => {
   //
   // Step 1: Cycle through all the posts
   //
