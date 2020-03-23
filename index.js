@@ -21,14 +21,9 @@ const compare = (a, b) => {
 
 const build = async () => {
   let content = null
-  const start = 3478
-  const end = 3500
-  const filename = [
-    'messages-',
-    String(start),
-    '-',
-    String(end),
-    '.json'].join('')
+  const start = 3482
+  const end = 4000
+  let lastId = null
 
   {
     const { err, data } = await generateArticles({ start, end })
@@ -40,10 +35,20 @@ const build = async () => {
     data.sort(compare)
     console.log(data.length)
     content = JSON.stringify(data)
+    lastId = (data.pop()).messageId
   }
 
   {
     console.log('>>> Writing file...')
+    const filename = [
+      'messages-',
+      String(start),
+      '-',
+      String(lastId),
+      '.json'].join('')
+
+    console.log(`>>> Filename: ${filename}`)
+
     const { err, data } = await writeArticlesFile({
       content,
       filename
