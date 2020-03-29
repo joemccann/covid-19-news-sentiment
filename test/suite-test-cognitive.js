@@ -43,9 +43,26 @@ test('pass -- sentiment text', async t => {
       text.push(el.title)
     })
     const { err, data } = await sentiment({ text })
-
     t.ok(!err)
     t.ok(data)
+
+    const first = data[0]
+
+    {
+      const {
+        id,
+        sentiment,
+        positive,
+        negative,
+        neutral
+      } = first
+      t.ok(id)
+      t.ok(sentiment)
+      t.ok(positive)
+      t.ok(negative)
+      t.ok(neutral)
+    }
+
     t.end()
   } catch (error) {
     console.error(error)

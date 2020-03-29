@@ -28,8 +28,7 @@ const sentiment = async ({ key = '', endpoint = '', text = [] }) => {
       const {
         id = null,
         sentiment = null,
-        confidenceScores = {},
-        sentences = []
+        confidenceScores = {}
       } = document
 
       const {
@@ -43,8 +42,7 @@ const sentiment = async ({ key = '', endpoint = '', text = [] }) => {
         sentiment,
         positive,
         negative,
-        neutral,
-        sentences
+        neutral
       }
       data.push(result)
     })
